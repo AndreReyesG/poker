@@ -24,6 +24,7 @@ func TestGETPlayers(t *testing.T) {
 
 		server.ServeHTTP(response, request)
 
+		poker.AssertStatus(t, response.Code, http.StatusOK)
 		poker.AssertResponseBody(t, response.Body.String(), "20")
 	})
 
@@ -33,7 +34,17 @@ func TestGETPlayers(t *testing.T) {
 
 		server.ServeHTTP(response, request)
 
+		poker.AssertStatus(t, response.Code, http.StatusOK)
 		poker.AssertResponseBody(t, response.Body.String(), "10")
+	})
+
+	t.Run("returns 404 on missing players", func(t *testing.T) {
+		request := newGetScoreRequest("Apollo")
+		response := httptest.NewRecorder()
+
+		server.ServeHTTP(response, request)
+
+		poker.AssertStatus(t, response.Code, http.StatusNotFound)
 	})
 }
 
