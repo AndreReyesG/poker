@@ -1,0 +1,19 @@
+package poker
+
+import "testing"
+
+type StubPlayerStore struct {
+	Scores map[string]int
+}
+
+func (s *StubPlayerStore) GetPlayerScore(name string) int {
+	score := s.Scores[name]
+	return score
+}
+
+func AssertResponseBody(t testing.TB, got, want string) {
+	t.Helper()
+	if got != want {
+		t.Errorf("response body is wrong, got %q, want %q", got, want)
+	}
+}

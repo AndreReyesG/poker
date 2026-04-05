@@ -10,33 +10,34 @@ import (
 )
 
 func TestGETPlayers(t *testing.T) {
+	store := poker.StubPlayerStore{
+		map[string]int{
+			"Moka":  20,
+			"Milky": 10,
+		},
+	}
+	server := poker.NewPlayerServer(&store)
+
 	t.Run("returns Moka's score", func(t *testing.T) {
 		request := newGetScoreRequest("Moka")
 		response := httptest.NewRecorder()
 
-		poker.PlayerServer(response, request)
+		server.ServeHTTP(response, request)
 
-		assertResponseBody(t, response.Body.String(), "20")
+		poker.AssertResponseBody(t, response.Body.String(), "20")
 	})
 
 	t.Run("returns Milky's score", func(t *testing.T) {
 		request := newGetScoreRequest("Milky")
 		response := httptest.NewRecorder()
 
-		poker.PlayerServer(response, request)
+		server.ServeHTTP(response, request)
 
-		assertResponseBody(t, response.Body.String(), "10")
+		poker.AssertResponseBody(t, response.Body.String(), "10")
 	})
 }
 
 func newGetScoreRequest(name string) *http.Request {
 	req, _ := http.NewRequest(http.MethodGet, fmt.Sprintf("/players/%s", name), nil)
 	return req
-}
-
-func assertResponseBody(t testing.TB, got, want string) {
-	t.Helper()
-	if got != want {
-		t.Errorf("response body is wrong, got %q, want %q", got, want)
-	}
 }
