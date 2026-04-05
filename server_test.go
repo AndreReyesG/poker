@@ -18,34 +18,43 @@ func TestGETPlayers(t *testing.T) {
 	}
 	server := poker.NewPlayerServer(&store)
 
-	t.Run("returns Moka's score", func(t *testing.T) {
-		request := newGetScoreRequest("Moka")
-		response := httptest.NewRecorder()
+	tests := []struct {
+		name               string
+		player             string
+		expectedHTTPStatus int
+		expectedScore      string
+	}{
+		{
+			name:               "returns Moka's score",
+			player:             "Moka",
+			expectedHTTPStatus: http.StatusOK,
+			expectedScore:      "20",
+		},
+		{
+			name:               "returns Milky's score",
+			player:             "Milky",
+			expectedHTTPStatus: http.StatusOK,
+			expectedScore:      "10",
+		},
+		{
+			name:               "returns 404 on missing players",
+			player:             "Apollo",
+			expectedHTTPStatus: http.StatusNotFound,
+			expectedScore:      "0",
+		},
+	}
 
-		server.ServeHTTP(response, request)
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			request := newGetScoreRequest(tt.player)
+			response := httptest.NewRecorder()
 
-		poker.AssertStatus(t, response.Code, http.StatusOK)
-		poker.AssertResponseBody(t, response.Body.String(), "20")
-	})
+			server.ServeHTTP(response, request)
 
-	t.Run("returns Milky's score", func(t *testing.T) {
-		request := newGetScoreRequest("Milky")
-		response := httptest.NewRecorder()
-
-		server.ServeHTTP(response, request)
-
-		poker.AssertStatus(t, response.Code, http.StatusOK)
-		poker.AssertResponseBody(t, response.Body.String(), "10")
-	})
-
-	t.Run("returns 404 on missing players", func(t *testing.T) {
-		request := newGetScoreRequest("Apollo")
-		response := httptest.NewRecorder()
-
-		server.ServeHTTP(response, request)
-
-		poker.AssertStatus(t, response.Code, http.StatusNotFound)
-	})
+			poker.AssertStatus(t, response.Code, tt.expectedHTTPStatus)
+			poker.AssertResponseBody(t, response.Body.String(), tt.expectedScore)
+		})
+	}
 }
 
 func newGetScoreRequest(name string) *http.Request {
