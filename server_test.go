@@ -22,4 +22,18 @@ func TestGETPlayers(t *testing.T) {
 			t.Errorf("got %q, want %q", got, want)
 		}
 	})
+
+	t.Run("returns Milky's score", func(t *testing.T) {
+		request, _ := http.NewRequest(http.MethodGet, "/players/Milky", nil)
+		response := httptest.NewRecorder()
+
+		poker.PlayerServer(response, request)
+
+		got := response.Body.String()
+		want := "10"
+
+		if got != want {
+			t.Errorf("got %q, want %q", got, want)
+		}
+	})
 }

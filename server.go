@@ -3,8 +3,22 @@ package poker
 import (
 	"fmt"
 	"net/http"
+	"strings"
 )
 
 func PlayerServer(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, "20")
+	player := strings.TrimPrefix(r.URL.Path, "/players/")
+	fmt.Fprint(w, GetPlayerScore(player))
+}
+
+func GetPlayerScore(name string) string {
+	if name == "Moka" {
+		return "20"
+	}
+
+	if name == "Milky" {
+		return "10"
+	}
+
+	return ""
 }
