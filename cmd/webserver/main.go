@@ -7,16 +7,8 @@ import (
 	"github.com/AndreReyesG/poker"
 )
 
-type InMemoryPlayerStore struct{}
-
-func (i *InMemoryPlayerStore) GetPlayerScore(name string) int {
-	return 123
-}
-
-func (i *InMemoryPlayerStore) RecordWin(name string) {}
-
 func main() {
-	server := poker.NewPlayerServer(&InMemoryPlayerStore{})
+	server := poker.NewPlayerServer(&poker.InMemoryPlayerStore{})
 	log.Print("starting server on :5000")
 	log.Fatal(http.ListenAndServe(":5000", server))
 }
