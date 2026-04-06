@@ -15,6 +15,7 @@ func TestGETPlayers(t *testing.T) {
 			"Moka":  20,
 			"Milky": 10,
 		},
+		nil,
 	}
 	server := poker.NewPlayerServer(&store)
 
@@ -59,19 +60,34 @@ func TestGETPlayers(t *testing.T) {
 func TestStoreWins(t *testing.T) {
 	store := poker.StubPlayerStore{
 		map[string]int{},
+		nil,
 	}
 	server := poker.NewPlayerServer(&store)
 
-	t.Run("it returns accepted on POST", func(t *testing.T) {
-		request, _ := http.NewRequest(http.MethodPost, "/players/Moka", nil)
+	t.Run("it records wins when POST", func(t *testing.T) {
+		player := "Moka"
+		request := newPostWinRequest(player)
 		response := httptest.NewRecorder()
 
 		server.ServeHTTP(response, request)
 		poker.AssertStatus(t, response.Code, http.StatusAccepted)
+
+		if len(store.WinCalls) != 1 {
+			t.Fatalf("got %d calls to RecordWin want %d", len(store.WinCalls), 1)
+		}
+
+		if store.WinCalls[0] != player {
+			t.Errorf("did not store correct winner got %q want %q", store.WinCalls[0], player)
+		}
 	})
 }
 
 func newGetScoreRequest(name string) *http.Request {
 	req, _ := http.NewRequest(http.MethodGet, fmt.Sprintf("/players/%s", name), nil)
+	return req
+}
+
+func newPostWinRequest(name string) *http.Request {
+	req, _ := http.NewRequest(http.MethodPost, fmt.Sprintf("/players/%s", name), nil)
 	return req
 }

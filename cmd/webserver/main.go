@@ -13,6 +13,8 @@ func (i *InMemoryPlayerStore) GetPlayerScore(name string) int {
 	return 123
 }
 
+func (i *InMemoryPlayerStore) RecordWin(name string) {}
+
 func main() {
 	server := poker.NewPlayerServer(&InMemoryPlayerStore{})
 	log.Print("starting server on :5000")
