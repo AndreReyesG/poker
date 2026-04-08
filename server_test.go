@@ -103,6 +103,7 @@ func TestLeague(t *testing.T) {
 		got := poker.GetLeagueFromResponse(t, response.Body)
 		poker.AssertStatus(t, response.Code, http.StatusOK)
 		poker.AssertLeague(t, got, wantedLeague)
+		poker.AssertContentType(t, response, poker.JSONContentType)
 	})
 }
 

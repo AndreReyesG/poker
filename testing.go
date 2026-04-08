@@ -3,6 +3,7 @@ package poker
 import (
 	"encoding/json"
 	"io"
+	"net/http/httptest"
 	"reflect"
 	"testing"
 )
@@ -54,4 +55,11 @@ func GetLeagueFromResponse(t testing.TB, body io.Reader) (league []Player) {
 		t.Fatalf("Unable to parse response from server %q into slice of Player, '%v'", body, err)
 	}
 	return
+}
+
+func AssertContentType(t testing.TB, response *httptest.ResponseRecorder, want string) {
+	t.Helper()
+	if response.Result().Header.Get("content-type") != want {
+		t.Errorf("response did not have content-type of %s, got %v", want, response.Result().Header)
+	}
 }
