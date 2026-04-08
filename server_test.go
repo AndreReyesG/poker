@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"reflect"
 	"testing"
 
 	"github.com/AndreReyesG/poker"
@@ -16,6 +17,7 @@ func TestGETPlayers(t *testing.T) {
 			"Moka":  20,
 			"Milky": 10,
 		},
+		nil,
 		nil,
 	}
 	server := poker.NewPlayerServer(&store)
@@ -62,6 +64,7 @@ func TestStoreWins(t *testing.T) {
 	store := poker.StubPlayerStore{
 		map[string]int{},
 		nil,
+		nil,
 	}
 	server := poker.NewPlayerServer(&store)
 
@@ -84,10 +87,16 @@ func TestStoreWins(t *testing.T) {
 }
 
 func TestLeague(t *testing.T) {
-	store := poker.StubPlayerStore{}
-	server := poker.NewPlayerServer(&store)
-
 	t.Run("it returns 200 on /league", func(t *testing.T) {
+		wantedLeague := []poker.Player{
+			{"Moka", 23},
+			{"Milky", 43},
+			{"Nacho", 29},
+		}
+
+		store := poker.StubPlayerStore{nil, nil, wantedLeague}
+		server := poker.NewPlayerServer(&store)
+
 		request, _ := http.NewRequest(http.MethodGet, "/league", nil)
 		response := httptest.NewRecorder()
 
@@ -100,6 +109,9 @@ func TestLeague(t *testing.T) {
 		}
 
 		poker.AssertStatus(t, response.Code, http.StatusOK)
+		if !reflect.DeepEqual(got, wantedLeague) {
+			t.Errorf("got %v want %v", got, wantedLeague)
+		}
 	})
 }
 

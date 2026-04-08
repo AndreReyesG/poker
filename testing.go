@@ -5,6 +5,7 @@ import "testing"
 type StubPlayerStore struct {
 	Scores   map[string]int
 	WinCalls []string
+	League   []Player
 }
 
 func (s *StubPlayerStore) GetPlayerScore(name string) int {
@@ -14,6 +15,10 @@ func (s *StubPlayerStore) GetPlayerScore(name string) int {
 
 func (s *StubPlayerStore) RecordWin(name string) {
 	s.WinCalls = append(s.WinCalls, name)
+}
+
+func (s *StubPlayerStore) GetLeague() []Player {
+	return s.League
 }
 
 func AssertResponseBody(t testing.TB, got, want string) {
