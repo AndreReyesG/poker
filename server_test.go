@@ -1,11 +1,9 @@
 package poker_test
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
-	"reflect"
 	"testing"
 
 	"github.com/AndreReyesG/poker"
@@ -97,21 +95,14 @@ func TestLeague(t *testing.T) {
 		store := poker.StubPlayerStore{nil, nil, wantedLeague}
 		server := poker.NewPlayerServer(&store)
 
-		request, _ := http.NewRequest(http.MethodGet, "/league", nil)
+		request := newLeagueRequest()
 		response := httptest.NewRecorder()
 
 		server.ServeHTTP(response, request)
-		var got []poker.Player
 
-		err := json.NewDecoder(response.Body).Decode(&got)
-		if err != nil {
-			t.Fatalf("Unable to parse response from server %q into slice of Player, '%v'", response.Body, err)
-		}
-
+		got := poker.GetLeagueFromResponse(t, response.Body)
 		poker.AssertStatus(t, response.Code, http.StatusOK)
-		if !reflect.DeepEqual(got, wantedLeague) {
-			t.Errorf("got %v want %v", got, wantedLeague)
-		}
+		poker.AssertLeague(t, got, wantedLeague)
 	})
 }
 
@@ -122,5 +113,10 @@ func newGetScoreRequest(name string) *http.Request {
 
 func newPostWinRequest(name string) *http.Request {
 	req, _ := http.NewRequest(http.MethodPost, fmt.Sprintf("/players/%s", name), nil)
+	return req
+}
+
+func newLeagueRequest() *http.Request {
+	req, _ := http.NewRequest(http.MethodGet, "/league", nil)
 	return req
 }

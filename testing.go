@@ -1,6 +1,11 @@
 package poker
 
-import "testing"
+import (
+	"encoding/json"
+	"io"
+	"reflect"
+	"testing"
+)
 
 type StubPlayerStore struct {
 	Scores   map[string]int
@@ -33,4 +38,20 @@ func AssertStatus(t testing.TB, got, want int) {
 	if got != want {
 		t.Errorf("did not get correct status, got %d, want %d", got, want)
 	}
+}
+
+func AssertLeague(t testing.TB, got, want []Player) {
+	t.Helper()
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("got %v want %v", got, want)
+	}
+}
+
+func GetLeagueFromResponse(t testing.TB, body io.Reader) (league []Player) {
+	t.Helper()
+	err := json.NewDecoder(body).Decode(&league)
+	if err != nil {
+		t.Fatalf("Unable to parse response from server %q into slice of Player, '%v'", body, err)
+	}
+	return
 }
