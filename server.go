@@ -1,9 +1,15 @@
 package poker
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 )
+
+type Player struct {
+	Name string
+	Wins int
+}
 
 type PlayerStore interface {
 	GetPlayerScore(name string) int
@@ -32,7 +38,10 @@ func NewPlayerServer(store PlayerStore) *PlayerServer {
 }
 
 func (p *PlayerServer) leagueHandler(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
+	league := []Player{
+		{"André", 20},
+	}
+	json.NewEncoder(w).Encode(league)
 }
 
 func (p *PlayerServer) showScoreHandler(w http.ResponseWriter, r *http.Request) {
