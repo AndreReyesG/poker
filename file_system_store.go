@@ -1,9 +1,6 @@
 package poker
 
-import (
-	"encoding/json"
-	"io"
-)
+import "io"
 
 type FileSystemPlayerStore struct {
 	database io.Reader
@@ -16,7 +13,6 @@ func NewFileSystemPlayerStore(database io.Reader) *FileSystemPlayerStore {
 }
 
 func (f *FileSystemPlayerStore) GetLeague() []Player {
-	var league []Player
-	json.NewDecoder(f.database).Decode(&league)
+	league, _ := NewLeague(f.database)
 	return league
 }
