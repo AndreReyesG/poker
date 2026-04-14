@@ -1,12 +1,15 @@
 package poker
 
-import "io"
+import (
+	"encoding/json"
+	"io"
+)
 
 type FileSystemPlayerStore struct {
-	database io.ReadSeeker
+	database io.ReadWriteSeeker
 }
 
-func NewFileSystemPlayerStore(database io.ReadSeeker) *FileSystemPlayerStore {
+func NewFileSystemPlayerStore(database io.ReadWriteSeeker) *FileSystemPlayerStore {
 	return &FileSystemPlayerStore{
 		database: database,
 	}
@@ -27,4 +30,17 @@ func (f *FileSystemPlayerStore) GetPlayerScore(name string) int {
 		}
 	}
 	return wins
+}
+
+func (f *FileSystemPlayerStore) RecordWin(name string) {
+	league := f.GetLeague()
+	for i, player := range league {
+		if player.Name == name {
+			league[i].Wins++
+			break
+		}
+	}
+
+	f.database.Seek(0, io.SeekStart)
+	json.NewEncoder(f.database).Encode(league)
 }
