@@ -72,4 +72,18 @@ func TestFileSystemStore(t *testing.T) {
 		want := 11
 		poker.AssertScoreEquals(t, got, want)
 	})
+
+	t.Run("store wins for new players", func(t *testing.T) {
+		database, cleanDatabase := createTempFile(t, `[
+			{"Name": "Moka", "Wins": 10},
+			{"Name": "Milky", "Wins": 33}]`)
+		defer cleanDatabase()
+
+		store := poker.NewFileSystemPlayerStore(database)
+
+		store.RecordWin("Rorro")
+		got := store.GetPlayerScore("Rorro")
+		want := 1
+		poker.AssertScoreEquals(t, got, want)
+	})
 }
