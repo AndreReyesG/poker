@@ -3,12 +3,22 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/AndreReyesG/poker"
 )
 
+const dbFileName = "game.db.json"
+
 func main() {
-	server := poker.NewPlayerServer(poker.NewInMemoryPlayerStore())
+	db, err := os.OpenFile(dbFileName, os.O_RDWR|os.O_CREATE, 0666)
+	if err != nil {
+		log.Fatalf("problem opening %s, %v", dbFileName, err)
+	}
+
+	store := poker.NewFileSystemPlayerStore(db)
+	server := poker.NewPlayerServer(store)
+
 	log.Print("starting server on :5000")
 	log.Fatal(http.ListenAndServe(":5000", server))
 }
