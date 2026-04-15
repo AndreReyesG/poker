@@ -27,7 +27,7 @@ func (s *StubPlayerStore) GetLeague() League {
 	return s.League
 }
 
-func CreateTempFile(t testing.TB, initialData string) (io.ReadWriteSeeker, func()) {
+func CreateTempFile(t testing.TB, initialData string) (*os.File, func()) {
 	t.Helper()
 	tmpfile, err := os.CreateTemp("", "db")
 	if err != nil {
