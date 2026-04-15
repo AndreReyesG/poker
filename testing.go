@@ -3,6 +3,7 @@ package poker
 import (
 	"io"
 	"net/http/httptest"
+	"os"
 	"reflect"
 	"testing"
 )
@@ -24,6 +25,22 @@ func (s *StubPlayerStore) RecordWin(name string) {
 
 func (s *StubPlayerStore) GetLeague() League {
 	return s.League
+}
+
+func CreateTempFile(t testing.TB, initialData string) (io.ReadWriteSeeker, func()) {
+	t.Helper()
+	tmpfile, err := os.CreateTemp("", "db")
+	if err != nil {
+		t.Fatalf("could not create temp file %v", err)
+	}
+
+	tmpfile.Write([]byte(initialData))
+
+	removeFile := func() {
+		tmpfile.Close()
+		os.Remove(tmpfile.Name())
+	}
+	return tmpfile, removeFile
 }
 
 func AssertResponseBody(t testing.TB, got, want string) {
