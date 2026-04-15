@@ -40,3 +40,10 @@ func AssertScoreEquals(t testing.TB, got, want int) {
 		t.Errorf("did not get correct score, got %d, want %d", got, want)
 	}
 }
+
+func AssertNoError(t testing.TB, err error) {
+	t.Helper()
+	if err != nil {
+		t.Fatalf("didn't want an error but got one, %q", err.Error())
+	}
+}

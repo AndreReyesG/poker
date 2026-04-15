@@ -16,7 +16,11 @@ func main() {
 		log.Fatalf("problem opening %s, %v", dbFileName, err)
 	}
 
-	store := poker.NewFileSystemPlayerStore(db)
+	store, err := poker.NewFileSystemPlayerStore(db)
+	if err != nil {
+		log.Fatalf("problem creating file system store, %q", err.Error())
+	}
+
 	server := poker.NewPlayerServer(store)
 
 	log.Print("starting server on :5000")

@@ -11,7 +11,10 @@ import (
 func TestRecordingWinsAndRetrievingThem(t *testing.T) {
 	database, cleanDatabase := poker.CreateTempFile(t, "")
 	defer cleanDatabase()
-	store := poker.NewFileSystemPlayerStore(database)
+
+	store, err := poker.NewFileSystemPlayerStore(database)
+	poker.AssertNoError(t, err)
+
 	server := poker.NewPlayerServer(store)
 
 	player := "Milky"
