@@ -13,6 +13,11 @@ help:
 run/webserver:
 	go run ./cmd/webserver
 
+## run/cli: run the cmd/cli application
+.PHONY: run/cli
+run/cli:
+	go run ./cmd/cli
+
 # ========================================================================= #
 # QUALITY CONTROL
 # ========================================================================= #
@@ -39,3 +44,9 @@ test:
 build/webserver:
 	@echo 'Building cmd/webserver...'
 	go build -o=./bin/webserver ./cmd/webserver
+
+## build/cli: build the cmd/cli application
+.PHONY: build/webserver
+build/cli:
+	@echo 'Building cmd/cli...'
+	go build -o=./bin/cli ./cmd/cli
