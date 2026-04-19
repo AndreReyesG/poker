@@ -47,3 +47,14 @@ func AssertNoError(t testing.TB, err error) {
 		t.Fatalf("didn't want an error but got one, %q", err.Error())
 	}
 }
+
+func AssertPlayerWin(t testing.TB, store *StubPlayerStore, winner string) {
+	t.Helper()
+	if len(store.WinCalls) != 1 {
+		t.Fatal("expected a win call but didn't get any")
+	}
+
+	if store.WinCalls[0] != winner {
+		t.Errorf("didn't record correct winner, got %q, want %q", store.WinCalls[0], winner)
+	}
+}

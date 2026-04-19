@@ -14,14 +14,5 @@ func TestCLI(t *testing.T) {
 	cli := poker.NewCLI(playerStore, in)
 	cli.PlayPoker()
 
-	if len(playerStore.WinCalls) != 1 {
-		t.Fatal("expected a win call but didn't get any")
-	}
-
-	got := playerStore.WinCalls[0]
-	want := "Moka"
-
-	if got != want {
-		t.Errorf("didn't record correct winner, got %q, want %q", got, want)
-	}
+	poker.AssertPlayerWin(t, playerStore, "Moka")
 }
