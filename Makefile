@@ -46,7 +46,7 @@ build/webserver:
 	go build -o=./bin/webserver ./cmd/webserver
 
 ## build/cli: build the cmd/cli application
-.PHONY: build/webserver
+.PHONY: build/cli
 build/cli:
 	@echo 'Building cmd/cli...'
 	go build -o=./bin/cli ./cmd/cli
